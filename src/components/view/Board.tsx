@@ -3,6 +3,10 @@ import Block from '../card/Block';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { useState } from 'react';
 import Custom from '../modal/Custom';
+import { InitialState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { Difficulty, setLayoutDefault } from '../../store/setting';
+import { setBlocks } from '../../store/data';
 const Container = styled.div`
   border-radius: 10px;
   background-color: #c0c0c0;
@@ -109,18 +113,23 @@ const ResetButton = styled.button`
   background-size: contain;
 `;
 
-const BlockSection = styled.div`
+const BlockSection = styled.div<{ width: number; height: number }>`
   border-right: 2px solid #ffffff;
   border-bottom: 2px solid #ffffff;
   border-top: 2px solid #7e7e7e;
-  width: 160px;
-  height: 160px;
+  width: ${(props) => `${props.width * 16}px`};
+  height: ${(props) => `${props.height * 16}px`};
+
   border-left: 2px solid #7e7e7e;
   display: flex;
   flex-wrap: wrap;
 `;
 
 function Board() {
+  const dispatch = useDispatch();
+  const setting = useSelector((state: InitialState) => state.setting);
+  const data = useSelector((state: InitialState) => state.data);
+
   const [visibility, setVisiblity] = useState<{
     option: boolean;
     custom: boolean;
@@ -129,7 +138,20 @@ function Board() {
     custom: false,
   });
 
-  const handleOption = () => {
+  const handleOption = ({ difficulty }: { difficulty: Difficulty }) => {
+    dispatch(
+      setLayoutDefault({
+        difficulty,
+      })
+    );
+    dispatch(
+      setBlocks({
+        width: setting.layout.width,
+        height: setting.layout.width,
+        bomb: setting.bomb,
+      })
+    );
+
     setVisiblity((prev) => ({ ...prev, option: false }));
   };
 
@@ -150,15 +172,24 @@ function Board() {
         {visibility.option && (
           <OptionsListWrapper>
             <OptionsList>
-              <OptionButton
-                onClick={handleOption}
-                style={{ borderBottom: '2px solid black' }}
-              >
+              <OptionButton style={{ borderBottom: '2px solid black' }}>
                 New
               </OptionButton>
-              <OptionButton onClick={handleOption}>Beginner</OptionButton>
-              <OptionButton onClick={handleOption}>Intermediate</OptionButton>
-              <OptionButton onClick={handleOption}>Expert</OptionButton>
+              <OptionButton
+                onClick={() => handleOption({ difficulty: 'beginner' })}
+              >
+                Beginner
+              </OptionButton>
+              <OptionButton
+                onClick={() => handleOption({ difficulty: 'intermediate' })}
+              >
+                Intermediate
+              </OptionButton>
+              <OptionButton
+                onClick={() => handleOption({ difficulty: 'expert' })}
+              >
+                Expert
+              </OptionButton>
               <OptionButton onClick={onClickCustom}>Custom</OptionButton>
             </OptionsList>
           </OptionsListWrapper>
@@ -174,109 +205,13 @@ function Board() {
             <IndicatorText>000</IndicatorText>
           </Indicator>
         </Header>
-        <BlockSection>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
+        <BlockSection
+          width={setting.layout.width}
+          height={setting.layout.height}
+        >
+          {data.blocks.map((block) => (
+            <Block key={block.blockIdx}></Block>
+          ))}
         </BlockSection>
       </ContentSection>
       {visibility.custom && <Custom setVisibility={setVisiblity}></Custom>}

@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 import { ModalBkg } from '../../style/util';
+import { useState } from 'react';
+import { Setting, setLayoutCustom } from '../../store/setting';
+import { useDispatch } from 'react-redux';
+import { setBlocks } from '../../store/data';
 
 const Container = styled.div`
   width: 400px;
@@ -70,7 +74,35 @@ function Custom({
     React.SetStateAction<{ custom: boolean; option: boolean }>
   >;
 }) {
+  const dispatch = useDispatch();
+  const [setting, setSetting] = useState<Setting>({
+    layout: {
+      width: 60,
+      height: 30,
+    },
+    bomb: 99,
+  });
+
   const handleClose = () => {
+    setVisibility((prev) => ({ ...prev, custom: false }));
+  };
+
+  const handleEnter = () => {
+    dispatch(
+      setLayoutCustom({
+        width: setting.layout.width,
+        height: setting.layout.height,
+        bomb: setting.bomb,
+      })
+    );
+
+    dispatch(
+      setBlocks({
+        width: setting.layout.width,
+        height: setting.layout.height,
+        bomb: setting.bomb,
+      })
+    );
     setVisibility((prev) => ({ ...prev, custom: false }));
   };
 
@@ -91,16 +123,50 @@ function Custom({
         <ContentSection>
           <Content>
             Game Height:
-            <ContentInput type="number"></ContentInput>
+            <ContentInput
+              type="number"
+              value={setting.layout.height}
+              onChange={(e) => {
+                setSetting((prev) => ({
+                  ...prev,
+                  layout: {
+                    ...prev.layout,
+                    height: parseInt(e.target.value, 10),
+                  },
+                }));
+              }}
+            ></ContentInput>
           </Content>
           <Content>
             Game width:
-            <ContentInput type="number"></ContentInput>
+            <ContentInput
+              type="number"
+              value={setting.layout.width}
+              onChange={(e) => {
+                setSetting((prev) => ({
+                  ...prev,
+                  layout: {
+                    ...prev.layout,
+                    width: parseInt(e.target.value, 10),
+                  },
+                }));
+              }}
+            ></ContentInput>
           </Content>
           <Content>
-            Number of Bombs: <ContentInput type="number"></ContentInput>
+            Number of Bombs:
+            <ContentInput
+              type="number"
+              value={setting.bomb}
+              onChange={(e) => {
+                setSetting((prev) => ({
+                  ...prev,
+                  bomb: parseInt(e.target.value, 10),
+                }));
+              }}
+            ></ContentInput>
           </Content>
-          <EnterButton>ENTER</EnterButton>
+          <EnterButton onClick={handleEnter}>ENTER</EnterButton>
         </ContentSection>
       </Container>
     </ModalBkg>
