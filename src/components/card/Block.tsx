@@ -1,9 +1,5 @@
 import styled from 'styled-components';
-import {
-  Block as BlockType,
-  checkBlock,
-  setAroundBomb,
-} from '../../store/data';
+import { Block as BlockType, checkBlock, setFlag } from '../../store/data';
 import { Status } from '../../store/data';
 import { useDispatch } from 'react-redux';
 
@@ -24,7 +20,13 @@ function Block({ data }: { data: BlockType }) {
       disabled={data.isChecked}
       status={data.status}
       onClick={() => {
-        dispatch(checkBlock({ blockIdx: data.blockIdx }));
+        if (!data.isThereFlag) {
+          dispatch(checkBlock({ blockIdx: data.blockIdx }));
+        }
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        dispatch(setFlag({ blockIdx: data.blockIdx }));
       }}
     ></Container>
   );

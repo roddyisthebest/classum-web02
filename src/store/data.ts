@@ -23,6 +23,7 @@ export interface Block {
   status: Status;
   aroundBomb: number;
   searchableBlockIdx: number[];
+  isThereFlag: boolean;
 }
 
 export interface Data {
@@ -90,6 +91,7 @@ const { actions, reducer } = createSlice({
           searchableBlockIdx,
           status: 'blank',
           aroundBomb: 0,
+          isThereFlag: false,
         };
 
         blocks.push(block);
@@ -184,29 +186,18 @@ const { actions, reducer } = createSlice({
         }
       }
     },
-    setAroundBomb(state, { payload }: PayloadAction<{ blockIdx: number }>) {
+    setFlag(state, { payload }: PayloadAction<{ blockIdx: number }>) {
       const blocks = [...state.blocks];
-      let aroundBomb = 0;
-      const searchableBlockIdx = blocks[payload.blockIdx].searchableBlockIdx;
-      console.log(payload.blockIdx);
 
-      for (let i = 0; i < searchableBlockIdx.length; i++) {
-        if (blocks[searchableBlockIdx[i]].isMine) {
-          aroundBomb += 1;
-        }
-      }
       blocks.splice(payload.blockIdx, 1, {
         ...blocks[payload.blockIdx],
-        aroundBomb,
-        status: blocks[payload.blockIdx].isMine
-          ? 'bombrevealed'
-          : `open${aroundBomb}`,
+        isThereFlag: !blocks[payload.blockIdx].isThereFlag,
+        status: !blocks[payload.blockIdx].isThereFlag ? 'bombflagged' : 'blank',
       });
-
       return { ...state, blocks };
     },
   },
 });
 
-export const { setBlocks, checkBlock, setAroundBomb } = actions;
+export const { setBlocks, checkBlock, setFlag } = actions;
 export default reducer;
