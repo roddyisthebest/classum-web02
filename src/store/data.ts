@@ -1,9 +1,27 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+
+export type Status =
+  | 'open0'
+  | 'open1'
+  | 'open2'
+  | 'open3'
+  | 'open4'
+  | 'open5'
+  | 'open6'
+  | 'open7'
+  | 'open8'
+  | 'bombrevealed'
+  | 'bombdeath'
+  | 'blank'
+  | 'bombflagged'
+  | string;
 
 export interface Block {
   isMine: boolean;
   isChecked: boolean;
   blockIdx: number;
+  status: Status;
+  aroundBomb: number;
   searchableBlockIdx: number[];
 }
 
@@ -34,13 +52,13 @@ const { actions, reducer } = createSlice({
 
         let cases = [
           { value: 1, idx: 1 },
-          { value: payload.height + 1, idx: 2 },
-          { value: payload.height, idx: 3 },
-          { value: payload.height - 1, idx: 4 },
+          { value: payload.width + 1, idx: 2 },
+          { value: payload.width, idx: 3 },
+          { value: payload.width - 1, idx: 4 },
           { value: -1, idx: 5 },
-          { value: -1 * (payload.height + 1), idx: 6 },
-          { value: -1 * payload.height, idx: 7 },
-          { value: -1 * (payload.height - 1), idx: 8 },
+          { value: -1 * (payload.width + 1), idx: 6 },
+          { value: -1 * payload.width, idx: 7 },
+          { value: -1 * (payload.width - 1), idx: 8 },
         ];
 
         if (i % payload.height === 0) {
@@ -70,6 +88,8 @@ const { actions, reducer } = createSlice({
           isChecked: false,
           blockIdx: i,
           searchableBlockIdx,
+          status: 'blank',
+          aroundBomb: 0,
         };
 
         blocks.push(block);
@@ -94,10 +114,121 @@ const { actions, reducer } = createSlice({
         });
       }
 
+      for (let i = 0; i < blocks.length; i++) {
+        const searchableBlockIdx = blocks[i].searchableBlockIdx;
+        let aroundBomb = 0;
+        for (let j = 0; j < searchableBlockIdx.length; j++) {
+          if (blocks[searchableBlockIdx[j]].isMine) {
+            aroundBomb += 1;
+          }
+        }
+
+        blocks.splice(i, 1, { ...blocks[i], aroundBomb });
+      }
+
+      return { ...state, blocks };
+    },
+    checkBlock(state, { payload }: PayloadAction<{ blockIdx: number }>) {
+      const blocks = [...state.blocks];
+
+      blocks.splice(payload.blockIdx, 1, {
+        ...blocks[payload.blockIdx],
+        isChecked: true,
+      });
+
+      if (blocks[payload.blockIdx].isMine) {
+        blocks.splice(payload.blockIdx, 1, {
+          ...blocks[payload.blockIdx],
+          status: 'bombdeath',
+        });
+
+        return { ...state, blocks };
+      }
+      if (blocks[payload.blockIdx].aroundBomb !== 0) {
+        blocks.splice(payload.blockIdx, 1, {
+          ...blocks[payload.blockIdx],
+          status: `open${blocks[payload.blockIdx].aroundBomb}`,
+        });
+        return { ...state, blocks };
+      } else {
+        blocks.splice(payload.blockIdx, 1, {
+          ...blocks[payload.blockIdx],
+          status: 'open0',
+        });
+
+        searchBlock({ idxList: blocks[payload.blockIdx].searchableBlockIdx });
+
+        return { ...state, blocks };
+      }
+
+      function searchBlock({ idxList }: { idxList: number[] }) {
+        for (let i = 0; i < idxList.length; i++) {
+          if (blocks[idxList[i]].aroundBomb !== 0) {
+            blocks.splice(blocks[idxList[i]].blockIdx, 1, {
+              ...blocks[idxList[i]],
+              isChecked: true,
+              status: `open${blocks[idxList[i]].aroundBomb}`,
+            });
+          } else if (
+            blocks[idxList[i]].aroundBomb === 0 &&
+            !blocks[idxList[i]].isChecked
+          ) {
+            blocks.splice(blocks[idxList[i]].blockIdx, 1, {
+              ...blocks[idxList[i]],
+              isChecked: true,
+              status: `open${blocks[idxList[i]].aroundBomb}`,
+            });
+
+            searchBlock({ idxList: blocks[idxList[i]].searchableBlockIdx });
+          }
+        }
+
+        // if (
+        //   blocks[payload.blockIdx].searchableBlockIdx.length -
+        //     pureBlockIdx.length !==
+        //   0
+        // ) {
+        // }
+        // else{
+        // }
+        // blocks.splice(payload.blockIdx, 1, {
+        //   ...blocks[payload.blockIdx],
+        //   status: `open${
+        //     blocks[payload.blockIdx].searchableBlockIdx.length -
+        //     pureBlockIdx.length
+        //   }`,
+        // });
+      }
+
+      // searchBlock({
+      //   idxList: blocks[payload.blockIdx].searchableBlockIdx,
+      // });
+
+      return { ...state, blocks };
+    },
+    setAroundBomb(state, { payload }: PayloadAction<{ blockIdx: number }>) {
+      const blocks = [...state.blocks];
+      let aroundBomb = 0;
+      const searchableBlockIdx = blocks[payload.blockIdx].searchableBlockIdx;
+      console.log(payload.blockIdx);
+
+      for (let i = 0; i < searchableBlockIdx.length; i++) {
+        if (blocks[searchableBlockIdx[i]].isMine) {
+          aroundBomb += 1;
+        }
+      }
+      blocks.splice(payload.blockIdx, 1, {
+        ...blocks[payload.blockIdx],
+        aroundBomb,
+        status: blocks[payload.blockIdx].isMine
+          ? 'bombrevealed'
+          : `open${aroundBomb}`,
+      });
+
       return { ...state, blocks };
     },
   },
 });
 
-export const { setBlocks } = actions;
+export const { setBlocks, checkBlock, setAroundBomb } = actions;
 export default reducer;

@@ -210,7 +210,7 @@ function Board() {
           height={setting.layout.height}
         >
           {data.blocks.map((block) => (
-            <Block key={block.blockIdx}></Block>
+            <Block key={block.blockIdx} data={block}></Block>
           ))}
         </BlockSection>
       </ContentSection>
