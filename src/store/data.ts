@@ -69,7 +69,10 @@ const { actions, reducer } = createSlice({
           );
         }
 
-        if (i % payload.height === payload.height - 1) {
+        if (
+          i % payload.height === payload.height - 1 &&
+          payload.width % payload.height !== 0
+        ) {
           cases = cases.filter(
             (caseObj) =>
               caseObj.idx !== 1 && caseObj.idx !== 2 && caseObj.idx !== 8
@@ -182,6 +185,11 @@ const { actions, reducer } = createSlice({
             });
 
             searchBlocks({ idxList: blocks[idxList[i]].searchableBlockIdx });
+          } else if (blocks[idxList[i]].isMine) {
+            blocks.splice(blocks[idxList[i]].blockIdx, 1, {
+              ...blocks[idxList[i]],
+              isChecked: true,
+            });
           }
         }
       }
