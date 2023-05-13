@@ -62,17 +62,14 @@ const { actions, reducer } = createSlice({
           { value: -1 * (payload.width - 1), idx: 8 },
         ];
 
-        if (i % payload.height === 0) {
+        if (i % payload.width === 0) {
           cases = cases.filter(
             (caseObj) =>
               caseObj.idx !== 4 && caseObj.idx !== 5 && caseObj.idx !== 6
           );
         }
 
-        if (
-          i % payload.height === payload.height - 1 &&
-          payload.width % payload.height !== 0
-        ) {
+        if (i % payload.width === payload.width - 1) {
           cases = cases.filter(
             (caseObj) =>
               caseObj.idx !== 1 && caseObj.idx !== 2 && caseObj.idx !== 8
