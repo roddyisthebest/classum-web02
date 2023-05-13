@@ -6,19 +6,11 @@ const Container = styled.button`
   height: 16px;
   background-color: transparent;
   border: none;
-`;
-
-const Img = styled.img`
-  width: 100%;
-  height: 100%;
+  background-image: url('https://freeminesweeper.org/images/blank.gif');
 `;
 
 function Block() {
-  return (
-    <Container>
-      <Img src="https://freeminesweeper.org/images/blank.gif"></Img>
-    </Container>
-  );
+  return <Container></Container>;
 }
 
 export default Block;

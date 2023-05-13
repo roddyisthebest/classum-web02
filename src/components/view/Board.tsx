@@ -65,11 +65,9 @@ const ResetButton = styled.button`
   background-color: transparent;
   padding: 0;
   border: none;
-`;
-
-const ResetBtnImg = styled.img`
-  width: 100%;
-  height: 100%;
+  background-image: url('https://freeminesweeper.org/images/facesmile.gif');
+  background-position: center center;
+  background-size: contain;
 `;
 
 const BlockSection = styled.div`
@@ -94,9 +92,7 @@ function Board() {
           <Indicator>
             <IndicatorText>000</IndicatorText>
           </Indicator>
-          <ResetButton>
-            <ResetBtnImg src="https://freeminesweeper.org/images/facesmile.gif"></ResetBtnImg>
-          </ResetButton>
+          <ResetButton></ResetButton>
           <Indicator>
             <IndicatorText>000</IndicatorText>
           </Indicator>
