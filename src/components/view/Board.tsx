@@ -1,8 +1,10 @@
 import styled from 'styled-components';
-import Block from './Block';
+import Block from '../card/Block';
+import { AiOutlineCheck } from 'react-icons/ai';
+import { useState } from 'react';
+import Custom from '../modal/Custom';
 const Container = styled.div`
   border-radius: 10px;
-
   background-color: #c0c0c0;
   padding: 10px;
   display: flex;
@@ -14,6 +16,7 @@ const MenuSection = styled.div`
   display: flex;
   align-items: center;
   gap: 0 15px;
+  position: relative;
 `;
 const MenuButton = styled.button`
   border: none;
@@ -22,6 +25,42 @@ const MenuButton = styled.button`
   font-size: 13px;
   padding: 0;
   cursor: pointer;
+`;
+
+const OptionsListWrapper = styled.div`
+  position: absolute;
+  padding: 2.5px;
+  border-right: 2px solid #2c2c2c;
+  border-bottom: 2px solid #2c2c2c;
+  border-left: 2px solid #808080;
+  border-top: 2px solid #808080;
+  z-index: 5;
+  background-color: #bdbdbd;
+  top: 30px;
+`;
+
+const OptionsList = styled.div`
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  border-left: 2px solid #2c2c2c;
+  border-top: 2px solid #2c2c2c;
+  display: flex;
+  flex-direction: column;
+`;
+
+const OptionButton = styled.button`
+  width: 90px;
+  height: 20px;
+  border: none;
+  display: flex;
+  gap: 0 5px;
+  align-items: center;
+  background-color: transparent;
+  color: black;
+  font-size: 10px;
+  &:hover {
+    color: blue;
+  }
 `;
 
 const ContentSection = styled.div`
@@ -82,10 +121,48 @@ const BlockSection = styled.div`
 `;
 
 function Board() {
+  const [visibility, setVisiblity] = useState<{
+    option: boolean;
+    custom: boolean;
+  }>({
+    option: false,
+    custom: false,
+  });
+
+  const handleOption = () => {
+    setVisiblity((prev) => ({ ...prev, option: false }));
+  };
+
+  const onClickCustom = () => {
+    setVisiblity((prev) => ({ option: false, custom: true }));
+  };
+
   return (
     <Container>
       <MenuSection>
-        <MenuButton>Game</MenuButton>
+        <MenuButton
+          onClick={() =>
+            setVisiblity((prev) => ({ ...prev, option: !prev.option }))
+          }
+        >
+          Game
+        </MenuButton>
+        {visibility.option && (
+          <OptionsListWrapper>
+            <OptionsList>
+              <OptionButton
+                onClick={handleOption}
+                style={{ borderBottom: '2px solid black' }}
+              >
+                New
+              </OptionButton>
+              <OptionButton onClick={handleOption}>Beginner</OptionButton>
+              <OptionButton onClick={handleOption}>Intermediate</OptionButton>
+              <OptionButton onClick={handleOption}>Expert</OptionButton>
+              <OptionButton onClick={onClickCustom}>Custom</OptionButton>
+            </OptionsList>
+          </OptionsListWrapper>
+        )}
       </MenuSection>
       <ContentSection>
         <Header>
@@ -202,6 +279,7 @@ function Board() {
           <Block></Block>
         </BlockSection>
       </ContentSection>
+      {visibility.custom && <Custom setVisibility={setVisiblity}></Custom>}
     </Container>
   );
 }
