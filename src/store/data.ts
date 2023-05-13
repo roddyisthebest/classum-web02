@@ -156,12 +156,12 @@ const { actions, reducer } = createSlice({
           status: 'open0',
         });
 
-        searchBlock({ idxList: blocks[payload.blockIdx].searchableBlockIdx });
+        searchBlocks({ idxList: blocks[payload.blockIdx].searchableBlockIdx });
 
         return { ...state, blocks };
       }
 
-      function searchBlock({ idxList }: { idxList: number[] }) {
+      function searchBlocks({ idxList }: { idxList: number[] }) {
         for (let i = 0; i < idxList.length; i++) {
           if (blocks[idxList[i]].aroundBomb !== 0) {
             blocks.splice(blocks[idxList[i]].blockIdx, 1, {
@@ -179,32 +179,10 @@ const { actions, reducer } = createSlice({
               status: `open${blocks[idxList[i]].aroundBomb}`,
             });
 
-            searchBlock({ idxList: blocks[idxList[i]].searchableBlockIdx });
+            searchBlocks({ idxList: blocks[idxList[i]].searchableBlockIdx });
           }
         }
-
-        // if (
-        //   blocks[payload.blockIdx].searchableBlockIdx.length -
-        //     pureBlockIdx.length !==
-        //   0
-        // ) {
-        // }
-        // else{
-        // }
-        // blocks.splice(payload.blockIdx, 1, {
-        //   ...blocks[payload.blockIdx],
-        //   status: `open${
-        //     blocks[payload.blockIdx].searchableBlockIdx.length -
-        //     pureBlockIdx.length
-        //   }`,
-        // });
       }
-
-      // searchBlock({
-      //   idxList: blocks[payload.blockIdx].searchableBlockIdx,
-      // });
-
-      return { ...state, blocks };
     },
     setAroundBomb(state, { payload }: PayloadAction<{ blockIdx: number }>) {
       const blocks = [...state.blocks];
