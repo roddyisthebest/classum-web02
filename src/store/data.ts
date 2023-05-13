@@ -28,7 +28,7 @@ const { actions, reducer } = createSlice({
       }>
     ) {
       const blocks: Block[] = [];
-
+      const randomNumbers: number[] = [];
       for (let i = 0; i < payload.width * payload.height; i++) {
         let searchableBlockIdx: number[] = [];
 
@@ -73,6 +73,25 @@ const { actions, reducer } = createSlice({
         };
 
         blocks.push(block);
+      }
+
+      while (1) {
+        const newRandomNumber = Math.floor(
+          Math.random() * (payload.width * payload.height)
+        );
+        if (!randomNumbers.includes(newRandomNumber)) {
+          randomNumbers.push(newRandomNumber);
+        }
+        if (randomNumbers.length === payload.bomb) {
+          break;
+        }
+      }
+
+      for (let i = 0; i < randomNumbers.length; i++) {
+        blocks.splice(randomNumbers[i], 1, {
+          ...blocks[randomNumbers[i]],
+          isMine: true,
+        });
       }
 
       return { ...state, blocks };
