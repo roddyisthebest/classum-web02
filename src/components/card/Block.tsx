@@ -25,8 +25,10 @@ function Block({ data }: { data: BlockType }) {
         }
       }}
       onContextMenu={(e) => {
-        e.preventDefault();
-        dispatch(setFlag({ blockIdx: data.blockIdx }));
+        if (!data.isChecked) {
+          e.preventDefault();
+          dispatch(setFlag({ blockIdx: data.blockIdx }));
+        }
       }}
     ></Container>
   );
