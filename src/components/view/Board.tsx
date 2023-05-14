@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Block from '../card/Block';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { useEffect, useState } from 'react';
-import Custom from '../modal/Custom';
+import CustomSetting from '../modal/CustomSetting';
 import { InitialState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Difficulty, setLayoutDefault } from '../../store/setting';
@@ -241,7 +241,9 @@ function Board() {
           ))}
         </BlockSection>
       </ContentSection>
-      {visibility.custom && <Custom setVisibility={setVisiblity}></Custom>}
+      {visibility.custom && (
+        <CustomSetting setVisibility={setVisiblity}></CustomSetting>
+      )}
     </Container>
   );
 }

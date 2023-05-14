@@ -67,7 +67,7 @@ const EnterButton = styled.button`
   font-weight: 500;
   width: 100px;
 `;
-function Custom({
+function CustomSetting({
   setVisibility,
 }: {
   setVisibility: React.Dispatch<
@@ -173,4 +173,4 @@ function Custom({
   );
 }
 
-export default Custom;
+export default CustomSetting;
