@@ -102,15 +102,21 @@ const IndicatorText = styled.span`
   font-weight: 600;
 `;
 
-const ResetButton = styled.button`
+const ResetButton = styled.button<{
+  isOver: boolean;
+}>`
   width: 30px;
   height: 30px;
   background-color: transparent;
   padding: 0;
   border: none;
-  background-image: url('https://freeminesweeper.org/images/facesmile.gif');
+  background-image: ${(props) =>
+    props.isOver
+      ? `url('https://freeminesweeper.org/images/facedead.gif')`
+      : `url('https://freeminesweeper.org/images/facesmile.gif')`};
   background-position: center center;
   background-size: contain;
+  cursor: pointer;
 `;
 
 const BlockSection = styled.div<{ width: number; height: number }>`
@@ -153,6 +159,16 @@ function Board() {
     );
 
     setVisiblity((prev) => ({ ...prev, option: false }));
+  };
+
+  const onClickResetBtn = () => {
+    dispatch(
+      setBlocks({
+        width: setting.layout.width,
+        height: setting.layout.width,
+        bomb: setting.bomb,
+      })
+    );
   };
 
   const onClickCustom = () => {
@@ -200,7 +216,7 @@ function Board() {
           <Indicator>
             <IndicatorText>000</IndicatorText>
           </Indicator>
-          <ResetButton></ResetButton>
+          <ResetButton isOver={false} onClick={onClickResetBtn}></ResetButton>
           <Indicator>
             <IndicatorText>000</IndicatorText>
           </Indicator>
