@@ -155,6 +155,8 @@ function Board() {
   });
 
   const handleOption = ({ difficulty }: { difficulty: Difficulty }) => {
+    setIndicator((prev) => ({ ...prev, second: 0 }));
+
     dispatch(
       setLayoutDefault({
         difficulty,
