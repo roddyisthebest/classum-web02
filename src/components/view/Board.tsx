@@ -7,6 +7,7 @@ import { InitialState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Difficulty, setLayoutDefault } from '../../store/setting';
 import { setBlocks, setGameStatus } from '../../store/data';
+import Completion from '../modal/Completion';
 const Container = styled.div`
   border-radius: 10px;
   background-color: #c0c0c0;
@@ -139,9 +140,11 @@ function Board() {
   const [visibility, setVisiblity] = useState<{
     option: boolean;
     custom: boolean;
+    completion: boolean;
   }>({
     option: false,
     custom: false,
+    completion: false,
   });
 
   const handleOption = ({ difficulty }: { difficulty: Difficulty }) => {
@@ -174,14 +177,16 @@ function Board() {
   };
 
   const onClickCustom = () => {
-    setVisiblity((prev) => ({ option: false, custom: true }));
+    setVisiblity((prev) => ({ ...prev, option: false, custom: true }));
   };
 
   useEffect(() => {
-    if (data.blocks.length === setting.bomb) {
+    const clickedBlocks = data.blocks.filter((block) => block.isChecked);
+    console.log(clickedBlocks.length);
+    if (data.blocks.length - clickedBlocks.length === setting.bomb) {
       dispatch(setGameStatus({ key: 'isComplete', value: true }));
     }
-  }, [data, dispatch, setting]);
+  }, [data.blocks, setting, dispatch]);
 
   return (
     <Container>
@@ -244,6 +249,7 @@ function Board() {
       {visibility.custom && (
         <CustomSetting setVisibility={setVisiblity}></CustomSetting>
       )}
+      {data.gameStatus.isComplete && <Completion></Completion>}
     </Container>
   );
 }

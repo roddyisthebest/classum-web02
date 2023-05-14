@@ -71,7 +71,11 @@ function CustomSetting({
   setVisibility,
 }: {
   setVisibility: React.Dispatch<
-    React.SetStateAction<{ custom: boolean; option: boolean }>
+    React.SetStateAction<{
+      custom: boolean;
+      option: boolean;
+      completion: boolean;
+    }>
   >;
 }) {
   const dispatch = useDispatch();

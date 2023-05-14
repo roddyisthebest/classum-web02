@@ -39,6 +39,7 @@ const { actions, reducer } = createSlice({
     blocks: [] as Block[],
     gameStatus: {
       isOver: false,
+      isComplete: false,
     },
   } as Data,
   reducers: {
@@ -138,7 +139,6 @@ const { actions, reducer } = createSlice({
     },
     checkBlock(state, { payload }: PayloadAction<{ blockIdx: number }>) {
       const blocks = [...state.blocks];
-
       blocks.splice(payload.blockIdx, 1, {
         ...blocks[payload.blockIdx],
         isChecked: true,
@@ -148,11 +148,16 @@ const { actions, reducer } = createSlice({
         for (let i = 0; i < blocks.length; i++) {
           if (!blocks[i].isChecked) {
             if (blocks[i].isMine) {
-              blocks.splice(i, 1, { ...blocks[i], status: 'bombrevealed' });
+              blocks.splice(i, 1, {
+                ...blocks[i],
+                status: 'bombrevealed',
+                isChecked: true,
+              });
             } else {
               blocks.splice(i, 1, {
                 ...blocks[i],
                 status: `open${blocks[i].aroundBomb}` as Status,
+                isChecked: true,
               });
             }
           }
@@ -174,6 +179,7 @@ const { actions, reducer } = createSlice({
           ...blocks[payload.blockIdx],
           status: `open${blocks[payload.blockIdx].aroundBomb}` as Status,
         });
+
         return { ...state, blocks };
       } else {
         blocks.splice(payload.blockIdx, 1, {
