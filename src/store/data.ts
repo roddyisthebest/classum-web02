@@ -30,6 +30,7 @@ export interface Data {
   gameStatus: {
     isOver: boolean;
     isComplete: boolean;
+    isInProgress: boolean;
   };
 }
 
@@ -40,6 +41,7 @@ const { actions, reducer } = createSlice({
     gameStatus: {
       isOver: false,
       isComplete: false,
+      isInProgress: false,
     },
   } as Data,
   reducers: {
@@ -135,7 +137,15 @@ const { actions, reducer } = createSlice({
         blocks.splice(i, 1, { ...blocks[i], aroundBomb });
       }
 
-      return { ...state, blocks };
+      return {
+        ...state,
+        blocks,
+        gameStatus: {
+          isOver: false,
+          isComplete: false,
+          isInProgress: false,
+        },
+      };
     },
     checkBlock(state, { payload }: PayloadAction<{ blockIdx: number }>) {
       const blocks = [...state.blocks];
@@ -171,7 +181,11 @@ const { actions, reducer } = createSlice({
         return {
           ...state,
           blocks,
-          gameStatus: { ...state.gameStatus, isOver: true },
+          gameStatus: {
+            ...state.gameStatus,
+            isOver: true,
+            isInProgress: false,
+          },
         };
       }
       if (blocks[payload.blockIdx].aroundBomb !== 0) {
@@ -234,7 +248,10 @@ const { actions, reducer } = createSlice({
       state,
       {
         payload,
-      }: PayloadAction<{ key: 'isComplete' | 'isOver'; value: boolean }>
+      }: PayloadAction<{
+        key: 'isComplete' | 'isOver' | 'isInProgress';
+        value: boolean;
+      }>
     ) {
       return {
         ...state,

@@ -1,7 +1,13 @@
 import styled from 'styled-components';
-import { Block as BlockType, checkBlock, setFlag } from '../../store/data';
+import {
+  Block as BlockType,
+  checkBlock,
+  setFlag,
+  setGameStatus,
+} from '../../store/data';
 import { Status } from '../../store/data';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { InitialState } from '../../store';
 
 const Container = styled.button<{ status: Status }>`
   padding: 0;
@@ -15,6 +21,9 @@ const Container = styled.button<{ status: Status }>`
 function Block({ data }: { data: BlockType }) {
   const dispatch = useDispatch();
 
+  const isInProgress = useSelector(
+    (state: InitialState) => state.data.gameStatus.isInProgress
+  );
   return (
     <Container
       disabled={data.isChecked}
@@ -22,6 +31,9 @@ function Block({ data }: { data: BlockType }) {
       onClick={() => {
         if (!data.isThereFlag) {
           dispatch(checkBlock({ blockIdx: data.blockIdx }));
+        }
+        if (!isInProgress) {
+          dispatch(setGameStatus({ key: 'isInProgress', value: true }));
         }
       }}
       onContextMenu={(e) => {

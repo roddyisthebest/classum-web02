@@ -74,7 +74,6 @@ function CustomSetting({
     React.SetStateAction<{
       custom: boolean;
       option: boolean;
-      completion: boolean;
     }>
   >;
 }) {

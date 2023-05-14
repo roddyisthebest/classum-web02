@@ -137,14 +137,21 @@ function Board() {
   const setting = useSelector((state: InitialState) => state.setting);
   const data = useSelector((state: InitialState) => state.data);
 
+  const [intervalst, setIntervalst] = useState<NodeJS.Timer | null>(null);
+  const [indicator, setIndicator] = useState<{
+    usableFlagNum: number;
+    second: number;
+  }>({
+    usableFlagNum: 0,
+    second: 0,
+  });
+
   const [visibility, setVisiblity] = useState<{
     option: boolean;
     custom: boolean;
-    completion: boolean;
   }>({
     option: false,
     custom: false,
-    completion: false,
   });
 
   const handleOption = ({ difficulty }: { difficulty: Difficulty }) => {
@@ -165,6 +172,8 @@ function Board() {
   };
 
   const onClickResetBtn = () => {
+    setIndicator((prev) => ({ ...prev, second: 0 }));
+
     dispatch(
       setBlocks({
         width: setting.layout.width,
@@ -182,11 +191,42 @@ function Board() {
 
   useEffect(() => {
     const clickedBlocks = data.blocks.filter((block) => block.isChecked);
-    console.log(clickedBlocks.length);
     if (data.blocks.length - clickedBlocks.length === setting.bomb) {
+      dispatch(setGameStatus({ key: 'isInProgress', value: false }));
       dispatch(setGameStatus({ key: 'isComplete', value: true }));
     }
   }, [data.blocks, setting, dispatch]);
+
+  useEffect(() => {
+    const flaggedBlocks = data.blocks.filter((block) => block.isThereFlag);
+    setIndicator((prev) => ({
+      ...prev,
+      usableFlagNum: setting.bomb - flaggedBlocks.length,
+    }));
+  }, [data.blocks, setting]);
+
+  useEffect(() => {
+    if (data.gameStatus.isInProgress) {
+      let interval = setInterval(() => {
+        setIndicator((prev) => ({ ...prev, second: prev.second + 1 }));
+      }, 1000);
+      setIntervalst(interval);
+    } else {
+      if (intervalst !== null) {
+        clearInterval(intervalst as NodeJS.Timer);
+        setIntervalst(null);
+        console.log('stop!');
+      }
+    }
+  }, [data.gameStatus.isInProgress]);
+
+  useEffect(() => {
+    if (data.gameStatus.isOver) {
+      if (intervalst !== null) {
+        clearInterval(intervalst);
+      }
+    }
+  }, [data.gameStatus.isOver, intervalst]);
 
   return (
     <Container>
@@ -227,14 +267,14 @@ function Board() {
       <ContentSection>
         <Header>
           <Indicator>
-            <IndicatorText>000</IndicatorText>
+            <IndicatorText>{indicator.usableFlagNum}</IndicatorText>
           </Indicator>
           <ResetButton
             isOver={data.gameStatus.isOver}
             onClick={onClickResetBtn}
           ></ResetButton>
           <Indicator>
-            <IndicatorText>000</IndicatorText>
+            <IndicatorText>{indicator.second}</IndicatorText>
           </Indicator>
         </Header>
         <BlockSection
