@@ -40,7 +40,7 @@ const { actions, reducer } = createSlice({
         bomb = 40;
       } else {
         layout.height = 16;
-        layout.width = 30;
+        layout.width = 32;
         bomb = 99;
       }
 
