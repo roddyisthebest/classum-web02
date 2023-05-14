@@ -13,8 +13,7 @@ export type Status =
   | 'bombrevealed'
   | 'bombdeath'
   | 'blank'
-  | 'bombflagged'
-  | string;
+  | 'bombflagged';
 
 export interface Block {
   isMine: boolean;
@@ -28,12 +27,19 @@ export interface Block {
 
 export interface Data {
   blocks: Block[];
+  gameStatus: {
+    isOver: boolean;
+    isComplete: boolean;
+  };
 }
 
 const { actions, reducer } = createSlice({
   name: 'data',
   initialState: {
     blocks: [] as Block[],
+    gameStatus: {
+      isOver: false,
+    },
   } as Data,
   reducers: {
     setBlocks(
@@ -139,17 +145,34 @@ const { actions, reducer } = createSlice({
       });
 
       if (blocks[payload.blockIdx].isMine) {
+        for (let i = 0; i < blocks.length; i++) {
+          if (!blocks[i].isChecked) {
+            if (blocks[i].isMine) {
+              blocks.splice(i, 1, { ...blocks[i], status: 'bombrevealed' });
+            } else {
+              blocks.splice(i, 1, {
+                ...blocks[i],
+                status: `open${blocks[i].aroundBomb}` as Status,
+              });
+            }
+          }
+        }
+
         blocks.splice(payload.blockIdx, 1, {
           ...blocks[payload.blockIdx],
           status: 'bombdeath',
         });
 
-        return { ...state, blocks };
+        return {
+          ...state,
+          blocks,
+          gameStatus: { ...state.gameStatus, isOver: true },
+        };
       }
       if (blocks[payload.blockIdx].aroundBomb !== 0) {
         blocks.splice(payload.blockIdx, 1, {
           ...blocks[payload.blockIdx],
-          status: `open${blocks[payload.blockIdx].aroundBomb}`,
+          status: `open${blocks[payload.blockIdx].aroundBomb}` as Status,
         });
         return { ...state, blocks };
       } else {
@@ -169,7 +192,7 @@ const { actions, reducer } = createSlice({
             blocks.splice(blocks[idxList[i]].blockIdx, 1, {
               ...blocks[idxList[i]],
               isChecked: true,
-              status: `open${blocks[idxList[i]].aroundBomb}`,
+              status: `open${blocks[idxList[i]].aroundBomb}` as Status,
             });
           } else if (
             blocks[idxList[i]].aroundBomb === 0 &&
@@ -178,7 +201,7 @@ const { actions, reducer } = createSlice({
             blocks.splice(blocks[idxList[i]].blockIdx, 1, {
               ...blocks[idxList[i]],
               isChecked: true,
-              status: `open${blocks[idxList[i]].aroundBomb}`,
+              status: `open${blocks[idxList[i]].aroundBomb}` as Status,
             });
 
             searchBlocks({ idxList: blocks[idxList[i]].searchableBlockIdx });
@@ -201,8 +224,19 @@ const { actions, reducer } = createSlice({
       });
       return { ...state, blocks };
     },
+    setGameStatus(
+      state,
+      {
+        payload,
+      }: PayloadAction<{ key: 'isComplete' | 'isOver'; value: boolean }>
+    ) {
+      return {
+        ...state,
+        gameStatus: { ...state.gameStatus, [payload.key]: payload.value },
+      };
+    },
   },
 });
 
-export const { setBlocks, checkBlock, setFlag } = actions;
+export const { setBlocks, checkBlock, setFlag, setGameStatus } = actions;
 export default reducer;

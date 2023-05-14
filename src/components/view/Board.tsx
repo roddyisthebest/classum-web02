@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import Block from '../card/Block';
 import { AiOutlineCheck } from 'react-icons/ai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Custom from '../modal/Custom';
 import { InitialState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Difficulty, setLayoutDefault } from '../../store/setting';
-import { setBlocks } from '../../store/data';
+import { setBlocks, setGameStatus } from '../../store/data';
 const Container = styled.div`
   border-radius: 10px;
   background-color: #c0c0c0;
@@ -165,15 +165,23 @@ function Board() {
     dispatch(
       setBlocks({
         width: setting.layout.width,
-        height: setting.layout.width,
+        height: setting.layout.height,
         bomb: setting.bomb,
       })
     );
+
+    dispatch(setGameStatus({ key: 'isOver', value: false }));
   };
 
   const onClickCustom = () => {
     setVisiblity((prev) => ({ option: false, custom: true }));
   };
+
+  useEffect(() => {
+    if (data.blocks.length === setting.bomb) {
+      dispatch(setGameStatus({ key: 'isComplete', value: true }));
+    }
+  }, [data, dispatch, setting]);
 
   return (
     <Container>
@@ -216,7 +224,10 @@ function Board() {
           <Indicator>
             <IndicatorText>000</IndicatorText>
           </Indicator>
-          <ResetButton isOver={false} onClick={onClickResetBtn}></ResetButton>
+          <ResetButton
+            isOver={data.gameStatus.isOver}
+            onClick={onClickResetBtn}
+          ></ResetButton>
           <Indicator>
             <IndicatorText>000</IndicatorText>
           </Indicator>
