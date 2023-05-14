@@ -91,6 +91,29 @@ function CustomSetting({
   };
 
   const handleEnter = () => {
+    if (
+      !(
+        setting.layout.width > 8 &&
+        setting.layout.width <= 100 &&
+        setting.layout.height > 8 &&
+        setting.layout.height <= 100 &&
+        setting.bomb < setting.layout.width * setting.layout.height &&
+        setting.bomb > 0
+      )
+    ) {
+      alert(
+        '지뢰찾기 dimensions invalid:\n1.width:From 8 to 100\n2.height:From 8 to 100\n3.Bomb:1 to width*height'
+      );
+      setSetting({
+        layout: {
+          width: 60,
+          height: 30,
+        },
+        bomb: 99,
+      });
+      return;
+    }
+
     dispatch(
       setLayoutCustom({
         width: setting.layout.width,
