@@ -131,12 +131,16 @@ const BlockSection = styled.div<{ width: number; height: number }>`
   flex-wrap: wrap;
 `;
 
+// 게임의 보드 역할을 하는 보드 컴포넌트입니다.
+// 세팅된 블록들이 렌더링됩니다.
+
 function Board() {
   const dispatch = useDispatch();
   const setting = useSelector((state: InitialState) => state.setting);
   const data = useSelector((state: InitialState) => state.data);
 
   const [intervalst, setIntervalst] = useState<NodeJS.Timer | null>(null);
+
   const [indicator, setIndicator] = useState<{
     usableFlagNum: number;
     second: number;
@@ -155,6 +159,7 @@ function Board() {
     completion: false,
   });
 
+  // 게임의 난이도를 선택하여 블록들을 세팅하는 함수입니다.
   const handleOption = ({ difficulty }: { difficulty: Difficulty }) => {
     setIndicator((prev) => ({ ...prev, second: 0 }));
 
@@ -174,6 +179,7 @@ function Board() {
     setVisiblity((prev) => ({ ...prev, option: false }));
   };
 
+  // 게임을 이미 설정된 세팅값을 이용하여 블록들을 리셋하는 함수입니다.
   const onClickResetBtn = () => {
     setIndicator((prev) => ({ ...prev, second: 0 }));
 
@@ -189,10 +195,10 @@ function Board() {
   };
 
   const onClickCustom = () => {
-    setIndicator((prev) => ({ ...prev, second: 0 }));
     setVisiblity((prev) => ({ ...prev, option: false, custom: true }));
   };
 
+  // 게임이 완료되면 게임상태나 시작한 타이머를 clear하는 useEffect 훅입니다.
   useEffect(() => {
     const checkedBlocks = data.blocks.filter((block) => block.isChecked);
 
@@ -203,6 +209,7 @@ function Board() {
     }
   }, [data.blocks, dispatch, setting.bomb, intervalst]);
 
+  // 사용가능한 플래그의 수를 나타내기 위한 useEffect 훅입니다.
   useEffect(() => {
     const flaggedBlocks = data.blocks.filter((block) => block.isThereFlag);
     setIndicator((prev) => ({
@@ -211,6 +218,7 @@ function Board() {
     }));
   }, [data.blocks, setting]);
 
+  // 타이머 start,clear를 담당하는 useEffect 훅입니다.
   useEffect(() => {
     if (data.gameStatus.isInProgress) {
       setIndicator((prev) => ({ ...prev, second: 0 }));
@@ -222,6 +230,7 @@ function Board() {
     } else {
       clearInterval(intervalst as NodeJS.Timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.gameStatus.isInProgress]);
 
   return (

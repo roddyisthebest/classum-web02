@@ -67,6 +67,9 @@ const EnterButton = styled.button`
   font-weight: 500;
   width: 100px;
 `;
+
+// 가로, 세로, 지뢰 수를 조절하는 커스텀 세팅 컴포넌트입니다.
+
 function CustomSetting({
   setVisibility,
 }: {
@@ -91,7 +94,9 @@ function CustomSetting({
     setVisibility((prev) => ({ ...prev, custom: false }));
   };
 
+  // 세팅을 적용시키는 함수입니다.
   const handleEnter = () => {
+    // 세팅값이 조건에 맞지 않으면 커스텀 설정이 되지 않습니다.
     if (
       !(
         setting.layout.width >= 8 &&
@@ -115,6 +120,7 @@ function CustomSetting({
       return;
     }
 
+    // 세팅 값을 리덕스에 적용하고
     dispatch(
       setLayoutCustom({
         width: setting.layout.width,
@@ -122,7 +128,7 @@ function CustomSetting({
         bomb: setting.bomb,
       })
     );
-
+    // 적용된 세팅값으로 블록을 세팅합니다.
     dispatch(
       setBlocks({
         width: setting.layout.width,

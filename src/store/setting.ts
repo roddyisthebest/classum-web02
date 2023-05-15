@@ -10,6 +10,8 @@ export interface Setting {
 
 export type Difficulty = 'beginner' | 'intermediate' | 'expert';
 
+// 게임의 설정값에 대한 스토어 - setting
+
 const { actions, reducer } = createSlice({
   name: 'setting',
   initialState: {
@@ -20,6 +22,7 @@ const { actions, reducer } = createSlice({
     bomb: 10,
   } as Setting,
   reducers: {
+    //  난이도를 기반으로 게임의 설정값 중 가로, 세로 레이아웃을 설정하는 리듀서입니다.
     setLayoutDefault(
       state,
       {
@@ -50,6 +53,7 @@ const { actions, reducer } = createSlice({
         bomb,
       };
     },
+    //  사용자 설정값으로 게임의 설정값 중 가로, 세로 레이아웃을 설정하는 리듀서입니다.
     setLayoutCustom(
       state,
       {

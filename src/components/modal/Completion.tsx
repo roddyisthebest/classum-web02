@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { ModalBkg } from '../../util/style';
-import { useDispatch, useSelector } from 'react-redux';
-import { setBlocks, setGameStatus } from '../../store/data';
+import { useSelector } from 'react-redux';
 import { InitialState } from '../../store';
 
 const HeaderSection = styled.div`
@@ -46,6 +45,9 @@ const ContentText = styled.span`
   color: black;
   font-size: 15px;
 `;
+
+// 게임이 완료되면 나타나는 게임 완료 컴포넌트입니다.
+// 게임의 세팅 정보를 제공합니다.
 
 function Completion({
   setVisibility,
