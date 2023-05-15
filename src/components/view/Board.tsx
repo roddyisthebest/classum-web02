@@ -219,7 +219,6 @@ function Board() {
       if (intervalst !== null) {
         clearInterval(intervalst as NodeJS.Timer);
         setIntervalst(null);
-        console.log('stop!');
       }
     }
   }, [data.gameStatus.isInProgress]);

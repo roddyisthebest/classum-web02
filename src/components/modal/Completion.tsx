@@ -83,11 +83,12 @@ function Completion() {
         </HeaderSection>
         <ContentSection>
           <ContentText>Congratulations on winning Minesweeper</ContentText>
+
           <ContentText>
-            <strong>Game time: </strong>
-            second
+            Game parameters: {setting.layout.width}x{setting.layout.height}
+            dimension / {setting.bomb}
+            bombs
           </ContentText>
-          <ContentText>Game parameters: 8x8 w/ 5 bombs</ContentText>
         </ContentSection>
       </Container>
     </ModalBkg>
