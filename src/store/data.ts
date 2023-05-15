@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+import createBlocks from '../util/func/createBlocks';
 
 export type Status =
   | 'open0'
@@ -55,87 +56,12 @@ const { actions, reducer } = createSlice({
         bomb: number;
       }>
     ) {
-      const blocks: Block[] = [];
-      const randomNumbers: number[] = [];
-      for (let i = 0; i < payload.width * payload.height; i++) {
-        let searchableBlockIdx: number[] = [];
-
-        let cases = [
-          { value: 1, idx: 1 },
-          { value: payload.width + 1, idx: 2 },
-          { value: payload.width, idx: 3 },
-          { value: payload.width - 1, idx: 4 },
-          { value: -1, idx: 5 },
-          { value: -1 * (payload.width + 1), idx: 6 },
-          { value: -1 * payload.width, idx: 7 },
-          { value: -1 * (payload.width - 1), idx: 8 },
-        ];
-
-        if (i % payload.width === 0) {
-          cases = cases.filter(
-            (caseObj) =>
-              caseObj.idx !== 4 && caseObj.idx !== 5 && caseObj.idx !== 6
-          );
-        }
-
-        if (i % payload.width === payload.width - 1) {
-          cases = cases.filter(
-            (caseObj) =>
-              caseObj.idx !== 1 && caseObj.idx !== 2 && caseObj.idx !== 8
-          );
-        }
-
-        for (let j = 0; j < cases.length; j++) {
-          searchableBlockIdx.push(i + cases[j].value);
-        }
-
-        searchableBlockIdx = searchableBlockIdx.filter(
-          (idx) => idx >= 0 && idx < payload.height * payload.width
-        );
-
-        const block: Block = {
-          isMine: false,
-          isChecked: false,
-          blockIdx: i,
-          searchableBlockIdx,
-          status: 'blank',
-          aroundBomb: 0,
-          isThereFlag: false,
-        };
-
-        blocks.push(block);
-      }
-
-      while (1) {
-        const newRandomNumber = Math.floor(
-          Math.random() * (payload.width * payload.height)
-        );
-        if (!randomNumbers.includes(newRandomNumber)) {
-          randomNumbers.push(newRandomNumber);
-        }
-        if (randomNumbers.length === payload.bomb) {
-          break;
-        }
-      }
-
-      for (let i = 0; i < randomNumbers.length; i++) {
-        blocks.splice(randomNumbers[i], 1, {
-          ...blocks[randomNumbers[i]],
-          isMine: true,
-        });
-      }
-
-      for (let i = 0; i < blocks.length; i++) {
-        const searchableBlockIdx = blocks[i].searchableBlockIdx;
-        let aroundBomb = 0;
-        for (let j = 0; j < searchableBlockIdx.length; j++) {
-          if (blocks[searchableBlockIdx[j]].isMine) {
-            aroundBomb += 1;
-          }
-        }
-
-        blocks.splice(i, 1, { ...blocks[i], aroundBomb });
-      }
+      const blocks: Block[] = createBlocks({
+        width: payload.width,
+        height: payload.height,
+        bomb: payload.bomb,
+        blockIdx: -1,
+      });
 
       return {
         ...state,
@@ -147,8 +73,31 @@ const { actions, reducer } = createSlice({
         },
       };
     },
-    checkBlock(state, { payload }: PayloadAction<{ blockIdx: number }>) {
-      const blocks = [...state.blocks];
+    checkBlock(
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        blockIdx: number;
+        width: number;
+        height: number;
+        bomb: number;
+      }>
+    ) {
+      let blocks = [...state.blocks];
+
+      if (blocks[payload.blockIdx].isMine && !state.gameStatus.isInProgress) {
+        console.log('처음인데 폭탄!');
+        const newBlocks: Block[] = createBlocks({
+          width: payload.width,
+          height: payload.height,
+          bomb: payload.bomb,
+          blockIdx: payload.blockIdx,
+        });
+
+        blocks = [...newBlocks];
+      }
+
       blocks.splice(payload.blockIdx, 1, {
         ...blocks[payload.blockIdx],
         isChecked: true,

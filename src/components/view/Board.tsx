@@ -222,14 +222,6 @@ function Board() {
     }
   }, [data.gameStatus.isInProgress]);
 
-  useEffect(() => {
-    if (data.gameStatus.isOver) {
-      if (intervalst !== null) {
-        clearInterval(intervalst);
-      }
-    }
-  }, [data.gameStatus.isOver, intervalst]);
-
   return (
     <Container>
       <MenuSection>

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ModalBkg } from '../../style/util';
+import { ModalBkg } from '../../util/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBlocks, setGameStatus } from '../../store/data';
 import { InitialState } from '../../store';

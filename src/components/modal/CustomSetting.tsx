@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ModalBkg } from '../../style/util';
+import { ModalBkg } from '../../util/style';
 import { useState } from 'react';
 import { Setting, setLayoutCustom } from '../../store/setting';
 import { useDispatch } from 'react-redux';

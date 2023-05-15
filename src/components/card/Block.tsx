@@ -24,13 +24,21 @@ function Block({ data }: { data: BlockType }) {
   const isInProgress = useSelector(
     (state: InitialState) => state.data.gameStatus.isInProgress
   );
+  const setting = useSelector((state: InitialState) => state.setting);
   return (
     <Container
       disabled={data.isChecked}
       status={data.status}
       onClick={() => {
         if (!data.isThereFlag) {
-          dispatch(checkBlock({ blockIdx: data.blockIdx }));
+          dispatch(
+            checkBlock({
+              blockIdx: data.blockIdx,
+              width: setting.layout.width,
+              height: setting.layout.height,
+              bomb: setting.bomb,
+            })
+          );
         }
         if (!isInProgress) {
           dispatch(setGameStatus({ key: 'isInProgress', value: true }));
