@@ -93,16 +93,16 @@ function CustomSetting({
   const handleEnter = () => {
     if (
       !(
-        setting.layout.width > 8 &&
+        setting.layout.width >= 8 &&
         setting.layout.width <= 100 &&
-        setting.layout.height > 8 &&
+        setting.layout.height >= 8 &&
         setting.layout.height <= 100 &&
         setting.bomb <= (setting.layout.width * setting.layout.height) / 2 &&
-        setting.bomb > 0
+        setting.bomb > 1
       )
     ) {
       alert(
-        '지뢰찾기 dimensions invalid:\n1.width:From 8 to 100\n2.height:From 8 to 100\n3.Bomb:1 to 1/2 of width*height'
+        '지뢰찾기 dimensions invalid:\n1.width:From 8 to 100\n2.height:From 8 to 100\n3.Bomb:2 to 1/2 of width*height'
       );
       setSetting({
         layout: {
