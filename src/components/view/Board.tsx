@@ -188,6 +188,7 @@ function Board() {
   };
 
   const onClickCustom = () => {
+    setIndicator((prev) => ({ ...prev, second: 0 }));
     setVisiblity((prev) => ({ ...prev, option: false, custom: true }));
   };
 
@@ -196,6 +197,7 @@ function Board() {
     if (data.blocks.length - clickedBlocks.length === setting.bomb) {
       dispatch(setGameStatus({ key: 'isInProgress', value: false }));
       dispatch(setGameStatus({ key: 'isComplete', value: true }));
+      setIndicator((prev) => ({ ...prev, second: 0 }));
     }
   }, [data.blocks, setting, dispatch]);
 
