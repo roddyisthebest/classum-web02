@@ -27,7 +27,7 @@ function Block({ data }: { data: BlockType }) {
   );
   return (
     <Container
-      disabled={data.isChecked && !data.isThereFlag && !isComplete}
+      disabled={data.isChecked || data.isThereFlag || isComplete}
       status={data.status}
       onClick={() => {
         dispatch(
