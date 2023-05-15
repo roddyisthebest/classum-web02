@@ -143,7 +143,11 @@ const { actions, reducer } = createSlice({
           status: `open${blocks[payload.blockIdx].aroundBomb}` as Status,
         });
 
-        return { ...state, blocks };
+        return {
+          ...state,
+          blocks,
+          gameStatus: { ...state.gameStatus, isInProgress: true },
+        };
       } else {
         blocks.splice(payload.blockIdx, 1, {
           ...blocks[payload.blockIdx],
@@ -151,6 +155,27 @@ const { actions, reducer } = createSlice({
         });
 
         searchBlocks({ idxList: blocks[payload.blockIdx].searchableBlockIdx });
+
+        const clickedBlocks = blocks.filter((block) => block.isChecked);
+
+        if (
+          !state.gameStatus.isInProgress &&
+          blocks.length - clickedBlocks.length === payload.bomb
+        ) {
+          if (blocks.length - clickedBlocks.length === payload.bomb) {
+            return {
+              ...state,
+              blocks,
+              gameStatus: { ...state.gameStatus, isComplete: true },
+            };
+          }
+        } else if (!state.gameStatus.isInProgress) {
+          return {
+            ...state,
+            blocks,
+            gameStatus: { ...state.gameStatus, isInProgress: true },
+          };
+        }
 
         return { ...state, blocks };
       }

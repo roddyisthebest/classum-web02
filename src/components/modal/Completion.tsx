@@ -47,24 +47,20 @@ const ContentText = styled.span`
   font-size: 15px;
 `;
 
-function Completion() {
-  const dispatch = useDispatch();
+function Completion({
+  setVisibility,
+}: {
+  setVisibility: React.Dispatch<
+    React.SetStateAction<{
+      custom: boolean;
+      option: boolean;
+      completion: boolean;
+    }>
+  >;
+}) {
   const setting = useSelector((state: InitialState) => state.setting);
   const handleClose = () => {
-    dispatch(
-      setGameStatus({
-        key: 'isComplete',
-        value: false,
-      })
-    );
-
-    dispatch(
-      setBlocks({
-        width: setting.layout.width,
-        height: setting.layout.height,
-        bomb: setting.bomb,
-      })
-    );
+    setVisibility((prev) => ({ ...prev, completion: false }));
   };
 
   return (

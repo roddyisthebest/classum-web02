@@ -149,9 +149,11 @@ function Board() {
   const [visibility, setVisiblity] = useState<{
     option: boolean;
     custom: boolean;
+    completion: boolean;
   }>({
     option: false,
     custom: false,
+    completion: false,
   });
 
   const handleOption = ({ difficulty }: { difficulty: Difficulty }) => {
@@ -193,13 +195,14 @@ function Board() {
   };
 
   useEffect(() => {
-    const clickedBlocks = data.blocks.filter((block) => block.isChecked);
-    if (data.blocks.length - clickedBlocks.length === setting.bomb) {
-      dispatch(setGameStatus({ key: 'isInProgress', value: false }));
+    const checkedBlocks = data.blocks.filter((block) => block.isChecked);
+
+    if (data.blocks.length - checkedBlocks.length === setting.bomb) {
       dispatch(setGameStatus({ key: 'isComplete', value: true }));
-      setIndicator((prev) => ({ ...prev, second: 0 }));
+      setVisiblity((prev) => ({ ...prev, completion: true }));
+      clearInterval(intervalst as NodeJS.Timer);
     }
-  }, [data.blocks, setting, dispatch]);
+  }, [data.blocks, dispatch, setting.bomb, intervalst]);
 
   useEffect(() => {
     const flaggedBlocks = data.blocks.filter((block) => block.isThereFlag);
@@ -211,15 +214,14 @@ function Board() {
 
   useEffect(() => {
     if (data.gameStatus.isInProgress) {
-      let interval = setInterval(() => {
+      setIndicator((prev) => ({ ...prev, second: 0 }));
+
+      let interval = setInterval(function () {
         setIndicator((prev) => ({ ...prev, second: prev.second + 1 }));
       }, 1000);
       setIntervalst(interval);
     } else {
-      if (intervalst !== null) {
-        clearInterval(intervalst as NodeJS.Timer);
-        setIntervalst(null);
-      }
+      clearInterval(intervalst as NodeJS.Timer);
     }
   }, [data.gameStatus.isInProgress]);
 
@@ -284,7 +286,9 @@ function Board() {
       {visibility.custom && (
         <CustomSetting setVisibility={setVisiblity}></CustomSetting>
       )}
-      {data.gameStatus.isComplete && <Completion></Completion>}
+      {visibility.completion && (
+        <Completion setVisibility={setVisiblity}></Completion>
+      )}
     </Container>
   );
 }

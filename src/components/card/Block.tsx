@@ -21,28 +21,23 @@ const Container = styled.button<{ status: Status }>`
 function Block({ data }: { data: BlockType }) {
   const dispatch = useDispatch();
 
-  const isInProgress = useSelector(
-    (state: InitialState) => state.data.gameStatus.isInProgress
-  );
   const setting = useSelector((state: InitialState) => state.setting);
+  const isComplete = useSelector(
+    (state: InitialState) => state.data.gameStatus.isComplete
+  );
   return (
     <Container
-      disabled={data.isChecked}
+      disabled={data.isChecked && !data.isThereFlag && !isComplete}
       status={data.status}
       onClick={() => {
-        if (!data.isThereFlag) {
-          dispatch(
-            checkBlock({
-              blockIdx: data.blockIdx,
-              width: setting.layout.width,
-              height: setting.layout.height,
-              bomb: setting.bomb,
-            })
-          );
-        }
-        if (!isInProgress) {
-          dispatch(setGameStatus({ key: 'isInProgress', value: true }));
-        }
+        dispatch(
+          checkBlock({
+            blockIdx: data.blockIdx,
+            width: setting.layout.width,
+            height: setting.layout.height,
+            bomb: setting.bomb,
+          })
+        );
       }}
       onContextMenu={(e) => {
         if (!data.isChecked) {

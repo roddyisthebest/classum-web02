@@ -74,16 +74,17 @@ function CustomSetting({
     React.SetStateAction<{
       custom: boolean;
       option: boolean;
+      completion: boolean;
     }>
   >;
 }) {
   const dispatch = useDispatch();
   const [setting, setSetting] = useState<Setting>({
     layout: {
-      width: 60,
-      height: 30,
+      width: 50,
+      height: 50,
     },
-    bomb: 99,
+    bomb: 10,
   });
 
   const handleClose = () => {
@@ -98,18 +99,18 @@ function CustomSetting({
         setting.layout.height >= 8 &&
         setting.layout.height <= 100 &&
         setting.bomb <= (setting.layout.width * setting.layout.height) / 2 &&
-        setting.bomb > 1
+        setting.bomb >= 1
       )
     ) {
       alert(
-        '지뢰찾기 dimensions invalid:\n1.width:From 8 to 100\n2.height:From 8 to 100\n3.Bomb:2 to 1/2 of width*height'
+        '지뢰찾기 dimensions invalid:\n1.width:From 8 to 100\n2.height:From 8 to 100\n3.Bomb:1 to 1/2 of width*height'
       );
       setSetting({
         layout: {
-          width: 60,
-          height: 30,
+          width: 50,
+          height: 50,
         },
-        bomb: 99,
+        bomb: 10,
       });
       return;
     }
