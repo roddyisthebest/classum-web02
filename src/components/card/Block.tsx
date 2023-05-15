@@ -8,7 +8,7 @@ import {
 import { Status } from '../../store/data';
 import { useDispatch, useSelector } from 'react-redux';
 import { InitialState } from '../../store';
-
+import { memo } from 'react';
 const Container = styled.button<{ status: Status }>`
   padding: 0;
   width: 16px;
@@ -49,4 +49,4 @@ function Block({ data }: { data: BlockType }) {
   );
 }
 
-export default Block;
+export default memo(Block);
